@@ -105,6 +105,7 @@ defineSimpleMode("jflex", {
   ],
   prologue: [
     {regex: "%{", token: "meta", mode: {spec: 'text/x-java', end: "%}"}, sol: true},
+    {regex: "%eof{", token: "meta", mode: {spec: 'text/x-java', end: "%eof}"}, sol: true},
     {regex: "%%", token: "meta", next: "lexer_rules", sol: true },
 
     {regex: /%(?:[a-zA-Z\\-]+)/, token: "keyword", sol: true},
