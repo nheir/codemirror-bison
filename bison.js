@@ -104,16 +104,26 @@ defineSimpleMode("jflex", {
     {regex: "", mode: {spec: 'text/x-java', end : '%%'}, next: "prologue", token: "meta"},
   ],
   prologue: [
-    {regex: "%{", token: "meta", mode: {spec: 'text/x-java', end: "%}"}, sol: true},
-    {regex: "%eof{", token: "meta", mode: {spec: 'text/x-java', end: "%eof}"}, sol: true},
-    {regex: "%%", token: "meta", next: "lexer_rules", sol: true },
+    {regex: "%{", sol: true, token: "meta", mode: {spec: 'text/x-java', end: "%}"}},
+    {regex: "%eof{", sol: true, token: "meta", mode: {spec: 'text/x-java', end: "%eof}"}},
+    {regex: "%%", sol: true, token: "meta", next: "lexer_rules"},
 
-    {regex: /%(?:[a-zA-Z\\-]+)/, token: "keyword", sol: true},
-    {regex: /([a-zA-Z][\w]*)\s*=(.*)/, token: ["variable-2"], sol: true},
+    {regex: /%(?:[0-9a-zA-Z\\-]+)/, sol: true, token: "keyword"},
+    {regex: /([a-zA-Z][\w]*)\s*(=)/, sol: true, token: ["variable-2", "operator"], next: "macroidentifier"},
 
     {regex: /\/\/.*/, token: "comment"},
     // A next property will cause the mode to move to a different state
     {regex: /\/\*/, token: "comment", push: "comment"},
+  ],
+  macroidentifier: [
+    {regex: "", sol: true, next: "prologue"},
+    {regex: /\{([a-zA-Z][\w]*)\}/, token: ["variable-2"]},
+    {regex: /"(?:[^\\]|\\.)*?(?:"|$)/, token: "string"},
+    {regex: /\/\/.*/, token: "comment"},
+    {regex: /\/\*/, token: "comment", push: "comment"},
+    {regex: /\\./, token: "atom",},
+    {regex: /[\[\]?+*|-]/, token: "operator"},
+    {regex: /\S/, token: "atom"},
   ],
   lexer_rules: [
     {regex: /\{([a-zA-Z][\w]*)\}/, token: ["variable-2"], next: "lexer_action"},
